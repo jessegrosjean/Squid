@@ -131,6 +131,17 @@ extension Request {
             zeroBasedPageIndex: zeroBasedPageIndex, decode: decode
         )
     }
+
+    public func construct<S>(
+        with service: S
+    ) -> AnyPublisher<URLRequest, Squid.Error> where S: HttpService {
+        return HttpRequest
+            .publisher(for: self, service: service)
+            .map { httpRequest in
+                httpRequest.urlRequest
+            }
+            .eraseToAnyPublisher()
+    }
 }
 
 extension Request where Result == Data {
