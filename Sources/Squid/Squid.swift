@@ -88,6 +88,9 @@ public struct Squid {
             return formatter
         }()
 
+        public var excludeHeader = false
+        public var excludeBody = false
+        
         /// Globally enables or disables logging for the Squid library. Has no effect in release
         /// compiles.
         ///

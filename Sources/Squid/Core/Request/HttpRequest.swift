@@ -77,14 +77,28 @@ internal struct HttpRequest {
 extension HttpRequest: CustomStringConvertible {
 
     var description: String {
-        let headerString = self.urlRequest
-            .allHTTPHeaderFields?.httpHeaderDescription?.indent(spaces: 12, skipLines: 1)
+        let excludeHeader = Squid.Logger.shared.excludeHeader
+        let headerString = excludeHeader ? "<excluded>" : (
+            self
+                .urlRequest
+                .allHTTPHeaderFields?
+                .httpHeaderDescription?
+                .indent(spaces: 12, skipLines: 1) ?? "<none>"
+        )
+
+        let excludeBody = Squid.Logger.shared.excludeBody
+        let bodyString = excludeBody ? "<excluded>" : (
+            self
+                .body?
+                .description
+                .indent(spaces: 12, skipLines: 1) ?? "<none>"
+        )
 
         return """
         - Method:   \(self.urlRequest.httpMethod ?? "<none>")
         - Url:      \(self.urlRequest.url?.absoluteString ?? "<none>")
-        - Headers:  \(headerString ?? "<none>")
-        - Body:     \(self.body?.description.indent(spaces: 12, skipLines: 1) ?? "<none>")
+        - Headers:  \(headerString)
+        - Body:     \(bodyString)
         """
     }
 }
