@@ -55,9 +55,20 @@ extension Publisher where Output == RawHttpResponse {
 extension HTTPURLResponse {
 
     fileprivate func description(for data: Data) -> String {
-        let headerString = (self.allHeaderFields as? [String: String])?
-            .httpHeaderDescription?.indent(spaces: 12, skipLines: 1)
-        var body = data.prettyPrintedJson.map { "\n" + $0.indent(spaces: 12) }
+        let excludeHeader = Squid.Logger.shared.excludeHeader
+        let excludeBody = Squid.Logger.shared.excludeBody
+
+        let headerString = excludeHeader ?
+            "<excluded>" :
+            (self
+                .allHeaderFields as? [String: String])?
+                .httpHeaderDescription?
+                .indent(spaces: 12, skipLines: 1)
+
+        var body = excludeBody ?
+            "<excluded>" :
+            data.prettyPrintedJson.map { "\n" + $0.indent(spaces: 12) }
+
         if body == nil {
             body = String(data: data, encoding: .utf8)?.truncate(to: 1000)
         }
