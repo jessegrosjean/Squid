@@ -90,13 +90,21 @@ public struct Squid {
 
         public var excludeHeader = false
         public var excludeBody = false
-        
+
         /// Globally enables or disables logging for the Squid library. Has no effect in release
         /// compiles.
         ///
         /// - Parameter doSilence: Whether to disable (`true`) or enable (`false`) logging.
         public static func silence(_ doSilence: Bool) {
             Logger.shared.silenced = doSilence
+        }
+
+        public static func excludeHeader(_ doExcludeHeader: Bool) {
+            Logger.shared.excludeHeader = doExcludeHeader
+        }
+
+        public static func excludeBody(_ doExcludeBody: Bool) {
+            Logger.shared.excludeBody = doExcludeBody
         }
 
         private var silenced = false
