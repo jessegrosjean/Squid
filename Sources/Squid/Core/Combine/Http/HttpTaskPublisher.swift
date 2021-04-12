@@ -57,6 +57,7 @@ extension HTTPURLResponse {
     fileprivate func description(for data: Data) -> String {
         let excludeHeader = Squid.Logger.shared.excludeHeader
         let excludeBody = Squid.Logger.shared.excludeBody
+        let truncateBody = Squid.Logger.shared.truncateBody
 
         let headerString = excludeHeader ?
             "<excluded>" :
@@ -70,7 +71,11 @@ extension HTTPURLResponse {
             data.prettyPrintedJson.map { "\n" + $0.indent(spaces: 12) }
 
         if body == nil {
-            body = String(data: data, encoding: .utf8)?.truncate(to: 1000)
+            body = String(data: data, encoding: .utf8)
+        }
+
+        if let truncateBody = truncateBody {
+            body = body?.truncate(to: truncateBody)
         }
 
         return """
@@ -91,6 +96,13 @@ extension Data {
             try? JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted]) else {
                 return nil
         }
-        return String(bytes: data, encoding: .utf8)?.truncate(to: 1000)
+
+        let dataString = String(bytes: data, encoding: .utf8)
+
+        if let truncateBody = Squid.Logger.shared.truncateBody {
+            return dataString?.truncate(to: truncateBody)
+        } else {
+            return dataString
+        }
     }
 }

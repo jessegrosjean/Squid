@@ -90,6 +90,7 @@ public struct Squid {
 
         public var excludeHeader = false
         public var excludeBody = false
+        public var truncateBody: Int?
 
         /// Globally enables or disables logging for the Squid library. Has no effect in release
         /// compiles.
@@ -105,6 +106,10 @@ public struct Squid {
 
         public static func excludeBody(_ doExcludeBody: Bool) {
             Logger.shared.excludeBody = doExcludeBody
+        }
+
+        public static func truncateBody(_ truncate: Int?) {
+            Logger.shared.truncateBody = truncate
         }
 
         private var silenced = false
